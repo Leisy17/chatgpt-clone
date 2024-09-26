@@ -1,37 +1,24 @@
 'use client'; // Ensure it's a client component
 
 import { useEffect, useState } from 'react';
-import '../../styles/styles.css'; // Adjust the import path if needed
+import '../../styles/Components.css'; // Adjust the import path if needed
 
 type Message = {
-  id: string; // Use string since it's UUID
+  id: string;
   original_message: string;
   edited_message: string | null;
 };
 
-const MessageList = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+interface MessageListProps {
+  messages: Message[]; // Accept messages as a prop
+  onEdit: (id: string, edited_message: string) => Promise<void>; // Accept onEdit function as a prop
+  conversationId: string | null; // Accept conversationId as a prop
+}
+
+const MessageList: React.FC<MessageListProps> = ({ messages, onEdit, conversationId }) => {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editedMessage, setEditedMessage] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-
-  // Fetch messages from the API
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch('/api/get-messages');
-        if (!response.ok) {
-          throw new Error('Failed to fetch messages');
-        }
-        const data: Message[] = await response.json();
-        setMessages(data);
-      } catch (error: any) {
-        setError(error.message || 'Unknown error occurred');
-      }
-    };
-
-    fetchMessages();
-  }, []);
 
   // Handle edit action
   const handleEditClick = (messageId: string, currentMessage: string) => {
@@ -42,31 +29,10 @@ const MessageList = () => {
   // Handle save (update the edited message)
   const handleSave = async (messageId: string) => {
     try {
-      const response = await fetch('/api/edit-message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: messageId,
-          edited_message: editedMessage,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to edit message');
-      }
-
-      // Update the local messages state after saving
-      const updatedMessages = messages.map((message) =>
-        message.id === messageId
-          ? { ...message, edited_message: editedMessage }
-          : message
-      );
-      setMessages(updatedMessages);
+      await onEdit(messageId, editedMessage); // Call the onEdit function from props
       setEditingMessageId(null); // Exit edit mode after saving
-    } catch (error: any) {
-      setError(error.message || 'Unknown error occurred');
+    } catch (error) {
+      setError('Failed to save the message.'); // Handle any errors
     }
   };
 

@@ -1,27 +1,31 @@
+// components/ChatInput.tsx
 import { useState } from 'react';
-import '../../styles/styles.css'; // Adjust the import path if needed
+import '../../styles/Components.css';
 
+// ChatInput.tsx
 interface ChatInputProps {
-  onSend: (message: string) => Promise<void>; // Ensure onSend returns a Promise
+    onSend: (original_message: string) => Promise<void>;
+    conversationId: string | null; // Allow null
 }
 
-const ChatInput = ({ onSend }: ChatInputProps) => {
+
+const ChatInput = ({ onSend, conversationId }: ChatInputProps) => {
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false); // Loading state
-  const [error, setError] = useState<string | null>(null); // Error state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
-      setLoading(true); // Set loading state
-      setError(null); // Reset error state
+      setLoading(true);
+      setError(null);
       try {
         await onSend(input);
-        setInput(''); // Clear input after sending
+        setInput('');
       } catch (err) {
-        setError('Failed to send message'); // Set error message
+        setError('Failed to send message');
       } finally {
-        setLoading(false); // Reset loading state
+        setLoading(false);
       }
     }
   };
@@ -32,17 +36,17 @@ const ChatInput = ({ onSend }: ChatInputProps) => {
         Type your message
       </label>
       <input
-        id="chat-input" // Associate label with input
+        id="chat-input"
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Type a new message"
-        aria-label="Chat message input" // Add aria-label for accessibility
+        aria-label="Chat message input"
       />
       <button type="submit" disabled={loading}>
-        {loading ? 'Sending...' : 'Send'} {/* Button text changes based on loading state */}
+        {loading ? 'Sending...' : 'Send'}
       </button>
-      {error && <p className="error-message">{error}</p>} {/* Display error message */}
+      {error && <p className="error-message">{error}</p>}
     </form>
   );
 };
