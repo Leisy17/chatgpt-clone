@@ -2,10 +2,9 @@ import { useState } from 'react';
 import '../../styles/Components.css';
 
 interface ChatInputProps {
-    onSend: (original_message: string) => Promise<void>;
-    conversationId: string | null;
+  onSend: (original_message: string, conversationId: string | null) => Promise<void>;
+  conversationId: string | null;
 }
-
 
 const ChatInput = ({ onSend, conversationId }: ChatInputProps) => {
   const [input, setInput] = useState('');
@@ -17,11 +16,13 @@ const ChatInput = ({ onSend, conversationId }: ChatInputProps) => {
     if (input.trim()) {
       setLoading(true);
       setError(null);
+
       try {
-        await onSend(input);
+        await onSend(input, conversationId);
         setInput('');
       } catch (err) {
-        setError('Failed to send message');
+        console.error('Error in handleSubmit:', err);
+        setError('Failed to send message.');
       } finally {
         setLoading(false);
       }

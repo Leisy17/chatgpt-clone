@@ -57,14 +57,61 @@ body {
 }
 
 .conversation-list {
-  width: 250px; /* Adjust width as necessary */
-  border-right: 1px solid #ccc;
-  padding: 10px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
+
 
 .chat-area {
-  flex-grow: 1; /* This makes the chat area take the remaining space */
+  flex-grow: 1;
   padding: 10px;
 }
 
+.conversation-list {
+  width: 250px;
+  border-right: 1px dashed #e0e0e0; /* Dashed border */
+  padding: 15px;
+  background-color: #fafafa;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+.conversation-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: pointer;
+}
+
+.conversation-item:hover {
+  background-color: #e0f7fa;
+  transform: translateY(-2px);
+}
+
+.conversation-item:active {
+  transform: translateY(0);
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.create-conversation-button {
+  background-color: #0070f3; /* Change to your preferred color */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.create-conversation-button:hover {
+  background-color: #005bb5;
+}
 
