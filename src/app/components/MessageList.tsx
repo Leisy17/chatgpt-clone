@@ -1,7 +1,7 @@
-'use client'; // Ensure it's a client component
+'use client';
 
 import { useEffect, useState } from 'react';
-import '../../styles/Components.css'; // Adjust the import path if needed
+import '../../styles/Components.css';
 
 type Message = {
   id: string;
@@ -10,9 +10,9 @@ type Message = {
 };
 
 interface MessageListProps {
-  messages: Message[]; // Accept messages as a prop
-  onEdit: (id: string, edited_message: string) => Promise<void>; // Accept onEdit function as a prop
-  conversationId: string | null; // Accept conversationId as a prop
+  messages: Message[];
+  onEdit: (id: string, edited_message: string) => Promise<void>;
+  conversationId: string | null;
 }
 
 const MessageList: React.FC<MessageListProps> = ({ messages, onEdit, conversationId }) => {
@@ -20,19 +20,17 @@ const MessageList: React.FC<MessageListProps> = ({ messages, onEdit, conversatio
   const [editedMessage, setEditedMessage] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
-  // Handle edit action
   const handleEditClick = (messageId: string, currentMessage: string) => {
     setEditingMessageId(messageId);
-    setEditedMessage(currentMessage); // Set the current message in the input field
+    setEditedMessage(currentMessage);
   };
 
-  // Handle save (update the edited message)
   const handleSave = async (messageId: string) => {
     try {
-      await onEdit(messageId, editedMessage); // Call the onEdit function from props
-      setEditingMessageId(null); // Exit edit mode after saving
+      await onEdit(messageId, editedMessage);
+      setEditingMessageId(null);
     } catch (error) {
-      setError('Failed to save the message.'); // Handle any errors
+      setError('Failed to save the message.');
     }
   };
 
@@ -42,28 +40,34 @@ const MessageList: React.FC<MessageListProps> = ({ messages, onEdit, conversatio
 
   return (
     <ul className="message-list">
-      {messages.map((message) => (
-        <li key={message.id}>
-          {editingMessageId === message.id ? (
-            <>
-              <input
-                type="text"
-                value={editedMessage}
-                onChange={(e) => setEditedMessage(e.target.value)}
-              />
-              <button onClick={() => handleSave(message.id)}>Save</button>
-              <button onClick={() => setEditingMessageId(null)}>Cancel</button>
-            </>
-          ) : (
-            <>
-              <p>You: {message.edited_message || message.original_message}</p>
-              <button onClick={() => handleEditClick(message.id, message.edited_message || message.original_message)}>
-                Edit
-              </button>
-            </>
-          )}
-        </li>
-      ))}
+      {messages
+        .filter((message) => message && message.id)
+        .map((message) => (
+          <li key={message.id}>
+            {editingMessageId === message.id ? (
+              <>
+                <input
+                  type="text"
+                  value={editedMessage}
+                  onChange={(e) => setEditedMessage(e.target.value)}
+                />
+                <button onClick={() => handleSave(message.id)}>Save</button>
+                <button onClick={() => setEditingMessageId(null)}>Cancel</button>
+              </>
+            ) : (
+              <>
+                <p>You: {message.edited_message || message.original_message}</p>
+                <button
+                  onClick={() =>
+                    handleEditClick(message.id, message.edited_message || message.original_message)
+                  }
+                >
+                  Edit
+                </button>
+              </>
+            )}
+          </li>
+        ))}
     </ul>
   );
 };

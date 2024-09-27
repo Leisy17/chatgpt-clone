@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { Conversation } from '../types/types';
 
 interface ListConversationsProps {
-    userId: string; // User ID passed as a prop
-    onSelectConversation: (conversationId: string) => void; // Callback for selecting a conversation
+    userId: string;
+    onSelectConversation: (conversationId: string) => void;
 }
 
 const ListConversations: React.FC<ListConversationsProps> = ({ userId, onSelectConversation }) => {
@@ -15,6 +15,7 @@ const ListConversations: React.FC<ListConversationsProps> = ({ userId, onSelectC
         const fetchConversations = async () => {
             try {
                 const response = await fetch(`/api/get-conversations?userId=${userId}`);
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch conversations');
                 }
@@ -36,7 +37,7 @@ const ListConversations: React.FC<ListConversationsProps> = ({ userId, onSelectC
             <ul>
                 {conversations.map((conversation) => (
                     <li key={conversation.id} onClick={() => onSelectConversation(conversation.id)}>
-                        {conversation.title}
+                        {conversation.title || 'Untitled Conversation'} {/* Display a default title if none is provided */}
                     </li>
                 ))}
             </ul>

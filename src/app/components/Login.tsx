@@ -18,7 +18,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null); // Clear previous errors
+        setError(null);
 
         if (!email || !password) {
             setError('Please fill in all fields');
@@ -26,7 +26,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         }
 
         try {
-            // Attempt to log in
+
             const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
@@ -42,24 +42,28 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
             const user = await response.json();
 
-            if (!user.user.id) {
+
+            if (!user.user?.id) {
                 throw new Error('User ID is undefined');
             }
 
-            const conversationsResponse = await fetch(`/api/conversations/${user.user.id}`);
+
+            const conversationsResponse = await fetch(`/api/get-conversations?userId=${user.user.id}`);
             if (!conversationsResponse.ok && conversationsResponse.status !== 404) {
                 const errorData = await conversationsResponse.json();
-            throw new Error(errorData.error || 'Could not fetch conversations.');
-        }
+                throw new Error(errorData.error || 'Could not fetch conversations.');
+            }
 
-        if (conversationsResponse.status === 404) {
-            onLoginSuccess({ id: user.id, conversations: [] });
-            return;
-        }
 
-        const conversations = await conversationsResponse.json();
+            if (conversationsResponse.status === 404) {
+                onLoginSuccess({ id: user.user.id, conversations: [] });
+                return;
+            }
 
-        onLoginSuccess({ id: user.id, conversations });
+            const conversations = await conversationsResponse.json();
+
+
+            onLoginSuccess({ id: user.user.id, conversations });
         } catch (err: any) {
             setError(err.message || 'Unknown error occurred');
         }

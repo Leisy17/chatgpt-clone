@@ -1,11 +1,9 @@
-// components/ChatInput.tsx
 import { useState } from 'react';
 import '../../styles/Components.css';
 
-// ChatInput.tsx
 interface ChatInputProps {
     onSend: (original_message: string) => Promise<void>;
-    conversationId: string | null; // Allow null
+    conversationId: string | null;
 }
 
 

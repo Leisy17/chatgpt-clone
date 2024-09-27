@@ -17,8 +17,7 @@ const Users = () => {
     if (error) {
       setError(error.message);
     } else {
-      setError(null); // Clear error if registration is successful
-      // Handle successful registration
+      setError(null);
     }
   };
 
